@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from app.schemas.queries import JobContentRequest, QueryRequest
 from app.ingestion.job_ingestor import JobIngestor
 
@@ -30,6 +30,11 @@ async def process_job(request: JobContentRequest, job_document: JobDocument = De
 
 @router.get("/query")
 async def query(query: QueryRequest, job_document: JobDocument = Depends(lambda: job_document_dependency)):
+    if not job_document.index:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No job document found. Please ingest a job document first."
+        )
 
     retriever = VectorIndexRetriever(index=job_document.index, similarity_top_k=3)
     query_engine = RetrieverQueryEngine(retriever=retriever)
