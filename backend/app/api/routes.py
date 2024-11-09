@@ -10,15 +10,15 @@ async def read_root():
 
 @router.post("/job")
 async def process_job(request: JobContentRequest):
+    ingestor = JobIngestor()
     if request.job_link:
-        # Fetch job content from the link
-        ingestor = JobIngestor()
-        job_content = ingestor.ingest(request.job_link)
-        return {
-            "message": f"Processing job link: {request.job_link}",
-            "job_content": job_content
-        }
+        message = f"Processing job link: {request.job_link}"
+        job_content = ingestor.ingest_job(request.job_link)
     else:
-        # Process the provided job content
-        return {"message": f"Processing job content: {request.job_content[:30]}"}
-    return {"message": "Job content"}
+        message = f"Processing job content"
+        job_content = ingestor.ingest_job(job_content=request.job_content)
+
+    return {
+        "message": message,
+        "job_content": job_content
+    }

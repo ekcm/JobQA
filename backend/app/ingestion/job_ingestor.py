@@ -9,4 +9,5 @@ class JobIngestor:
             )
             return web_document
         else:
-            return Document(content=job_content)
+            text_document = Document(text=job_content)
+            return text_document
