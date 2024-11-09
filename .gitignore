@@ -1,0 +1,11 @@
+# ignore macOS system files
+.DS_Store
+
+# ignore environment variables
+.env
+
+# ignore python cache files
+.ipynb_checkpoints/
+
+# ignore sample resume data
+data/
