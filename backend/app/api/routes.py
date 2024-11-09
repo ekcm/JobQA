@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app.schemas.queries import JobContentRequest
+from app.ingestion.job_ingestor import JobIngestor
 
 router = APIRouter()
 
@@ -11,7 +12,12 @@ async def read_root():
 async def process_job(request: JobContentRequest):
     if request.job_link:
         # Fetch job content from the link
-        return {"message": f"Processing job link: {request.job_link}"}
+        ingestor = JobIngestor()
+        job_content = ingestor.ingest(request.job_link)
+        return {
+            "message": f"Processing job link: {request.job_link}",
+            "job_content": job_content
+        }
     else:
         # Process the provided job content
         return {"message": f"Processing job content: {request.job_content[:30]}"}

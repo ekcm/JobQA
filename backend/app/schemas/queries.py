@@ -1,4 +1,4 @@
-from pydantic import BaseModel, root_validator
+from pydantic import BaseModel, root_validator, HttpUrl
 from typing import Optional
 
 class JobContentRequest(BaseModel):
