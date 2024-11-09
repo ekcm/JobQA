@@ -11,6 +11,7 @@ fastapi = "^0.115.4"
 uvicorn = "^0.32.0"
 llama-index = "^0.11.22"
 llama-index-readers-web = "^0.2.4"
+llama-index-vector-stores-chroma = "^0.3.0"
 
 
 [build-system]

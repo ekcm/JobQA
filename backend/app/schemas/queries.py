@@ -10,3 +10,6 @@ class JobContentRequest(BaseModel):
         if bool(values.get('job_link')) == bool(values.get('job_content')):
             raise ValueError('Exactly one of job_link or job_content must be provided')
         return values
+
+class QueryRequest(BaseModel):
+    query: str
