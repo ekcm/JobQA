@@ -17,8 +17,6 @@ from app.core.config import settings
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 
-api_key = settings.OPENAI_API_KEY
-
 class JobIngestor:
     def __init__(self):
         self.chroma_client = chromadb.EphemeralClient()
@@ -31,9 +29,12 @@ class JobIngestor:
             document = SimpleWebPageReader(html_to_text=True).load_data(
                 [job_link]
             )
+            index = VectorStoreIndex(document, storage_context=self.storage_context)
         else:
             document = Document(text=job_content)
+            index = VectorStoreIndex([document], storage_context=self.storage_context)
 
-        index = VectorStoreIndex([document], storage_context=self.storage_context)
 
         return index
+
+
