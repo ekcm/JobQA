@@ -6,6 +6,7 @@
 
 # ignore python cache files
 .ipynb_checkpoints/
+*.pyc
 
 # ignore sample resume data
 data/
