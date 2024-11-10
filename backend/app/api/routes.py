@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from app.schemas.queries import JobContentRequest, QueryRequest
 from app.ingestion.job_ingestor import JobIngestor, ResumeIngestor
+from app.retrieval.retriever import JobRetriever, ResumeRetriever
 
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
@@ -51,17 +52,17 @@ async def process_resume(file: UploadFile = File(...)):
 
 @router.get("/query")
 async def query(query: QueryRequest, job_document: JobDocument = Depends(lambda: job_document_dependency)):
-    if not job_document.index:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No job document found. Please ingest a job document first."
-        )
+    # if not job_document.index:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail="No job document found. Please ingest a job document first."
+    #     )
 
-    retriever = VectorIndexRetriever(index=job_document.index, similarity_top_k=3)
-    query_engine = RetrieverQueryEngine(retriever=retriever)
-    response = query_engine.query(query.query)
+    # job_retriever = JobRetriever(job_document.index)
+    # response = job_retriever.retrieve_job(query.query)
 
-    return {
-        "query": query.query,
-        "response": response
-    }
+    resume_retriever = ResumeRetriever()
+    resume_response = resume_retriever.retrieve_resume(query.query)
+
+
+    return resume_response
