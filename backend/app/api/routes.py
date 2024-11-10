@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from app.schemas.queries import JobContentRequest, QueryRequest
-from app.ingestion.job_ingestor import JobIngestor
+from app.ingestion.job_ingestor import JobIngestor, ResumeIngestor
 
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
@@ -35,7 +35,7 @@ async def process_resume(file: UploadFile = File(...)):
             detail="Only PDF files are supported"
         )
 
-    ingestor = JobIngestor()
+    ingestor = ResumeIngestor()
     result = ingestor.ingest_resume(file)
 
     if result.get("status")== "success":

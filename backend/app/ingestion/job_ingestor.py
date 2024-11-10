@@ -36,6 +36,7 @@ class JobIngestor:
 
         return index
 
+class ResumeIngestor:
     def ingest_resume(self, file):
         try:
             resume_content = ''
