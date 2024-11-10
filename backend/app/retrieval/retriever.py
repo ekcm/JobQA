@@ -38,6 +38,6 @@ class ResumeRetriever:
 
         return {
             "query": query,
-            "response": response[0].node.text,
+            "documents": response[0].node.text,
         }
         
