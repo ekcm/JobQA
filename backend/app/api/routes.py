@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from app.schemas.queries import JobContentRequest, QueryRequest
 from app.ingestion.job_ingestor import JobIngestor
 
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
-
 
 router = APIRouter()
 
@@ -27,6 +26,28 @@ async def process_job(request: JobContentRequest, job_document: JobDocument = De
     return {
         "message": message,
     }
+
+@router.post("/resume")
+async def process_resume(file: UploadFile = File(...)):
+    if file.content_type != "application/pdf":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF files are supported"
+        )
+
+    ingestor = JobIngestor()
+    result = ingestor.ingest_resume(file)
+
+    if result.get("status")== "success":
+        return {
+            "status": result["status"],
+            "message": result["message"]
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=result["message"]
+        )
 
 @router.get("/query")
 async def query(query: QueryRequest, job_document: JobDocument = Depends(lambda: job_document_dependency)):
