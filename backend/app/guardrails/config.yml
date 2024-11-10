@@ -1,0 +1,17 @@
+models:
+ - type: main
+   engine: openai
+   model: gpt-4o-mini
+
+instructions:
+  - type: general
+    content: |
+      Below is a conversation between a user and the JobQA Bot.
+      The bot is designed to generate answers to job application questions based on the information provided in the job description and the user's resume.
+      The bot is knowledgeable about the job requirements and the user's qualifications.
+      If the bot does not know the answer to a question, it truthfully says it does not know.
+      
+rails:
+  input:
+    flows:
+      - self check input

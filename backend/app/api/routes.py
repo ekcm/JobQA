@@ -7,6 +7,8 @@ from app.generation.generator import GenerateAnswer
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 
+from nemoguardrails import RailsConfig, LLMRails
+
 router = APIRouter()
 
 class JobDocument:
@@ -52,21 +54,32 @@ async def process_resume(file: UploadFile = File(...)):
         )
 
 @router.get("/query")
-async def query(query: QueryRequest, job_document: JobDocument = Depends(lambda: job_document_dependency)):
-    if not job_document.index:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No job document found. Please ingest a job document first."
-        )
+def query(query: QueryRequest, job_document: JobDocument = Depends(lambda: job_document_dependency)):
+    # if not job_document.index:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail="No job document found. Please ingest a job document first."
+    #     )
 
-    job_retriever = JobRetriever(job_document.index)
-    job_response = job_retriever.retrieve_job(query.query)
+    config = RailsConfig.from_path("app/guardrails")
+    rails = LLMRails(config)
 
-    resume_retriever = ResumeRetriever()
-    resume_response = resume_retriever.retrieve_resume(query.query)
+    response = rails.generate(messages=[{
+        "role": "user",
+        "content": query.query
+    }])
+    print(response["content"])
 
-    generate_answer = GenerateAnswer()
-    answer = generate_answer.generate_answer(query.query, job_response["documents"], resume_response["documents"])
+    # job_retriever = JobRetriever(job_document.index)
+    # job_response = job_retriever.retrieve_job(query.query)
+
+    # resume_retriever = ResumeRetriever()
+    # resume_response = resume_retriever.retrieve_resume(query.query)
+
+    # generate_answer = GenerateAnswer()
+    # answer = generate_answer.generate_answer(query.query, job_response["documents"], resume_response["documents"])
+
+    answer = "hello world"
 
     return {
         "query": query.query,
